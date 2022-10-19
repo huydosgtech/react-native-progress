@@ -157,6 +157,7 @@ export default class ProgressBar extends Component {
     const progressStyle = {
       backgroundColor: color,
       height,
+      borderRadius: 10,
       transform: [
         {
           translateX: this.state.animationValue.interpolate({
@@ -177,7 +178,6 @@ export default class ProgressBar extends Component {
           }),
         },
       ],
-      borderRadius: 10
     };
 
     const progressStyleBycicle = {
@@ -215,8 +215,8 @@ export default class ProgressBar extends Component {
             <GoldMedal />
           </View>
         </View>
-        <View style={{backgroundColor: "rgba(32, 34, 44, 1)", borderRadius: 10}}>
-          <Animated.View style={[progressStyle]} />
+        <View style={{backgroundColor: "rgba(32, 34, 44, 1)", borderRadius: 10, overflow: 'hidden'}}>
+          <Animated.View style={progressStyle} />
         </View>
         {children}
       </View>
