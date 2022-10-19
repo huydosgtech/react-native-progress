@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Animated, Easing, View, I18nManager } from 'react-native';
+import GoldMedal from './images/gold-medal-icon.svg';
 
 const INDETERMINATE_WIDTH_FACTOR = 0.3;
 const BAR_WIDTH_ZERO_POSITION =
@@ -25,6 +26,10 @@ export default class ProgressBar extends Component {
     useNativeDriver: PropTypes.bool,
     animationConfig: PropTypes.object,
     animationType: PropTypes.oneOf(['decay', 'timing', 'spring']),
+    widthBycicle: PropTypes.number,
+    heightBycicle: PropTypes.number,
+    widthMedal: PropTypes.number,
+    heightMedal: PropTypes.number,
   };
 
   static defaultProps = {
@@ -40,6 +45,11 @@ export default class ProgressBar extends Component {
     useNativeDriver: false,
     animationConfig: { bounciness: 0 },
     animationType: 'spring',
+    widthBycicle: 33,
+    heightBycicle: 28,
+    widthMedal: 17,
+    heightMedal: 20,
+
   };
 
   constructor(props) {
@@ -127,6 +137,10 @@ export default class ProgressBar extends Component {
       style,
       unfilledColor,
       width,
+      widthBycicle, 
+      heightBycicle,
+      widthMedal,
+      heightMedal,
       ...restProps
     } = this.props;
 
@@ -137,7 +151,8 @@ export default class ProgressBar extends Component {
       borderColor: borderColor || color,
       borderRadius,
       overflow: 'hidden',
-      backgroundColor: unfilledColor,
+      backgroundColor: 'transparent',
+      paddingVertical: 5,
     };
     const progressStyle = {
       backgroundColor: color,
@@ -156,10 +171,27 @@ export default class ProgressBar extends Component {
           }),
         },
         {
-          // Interpolation a temp workaround for https://github.com/facebook/react-native/issues/6278
           scaleX: this.state.progress.interpolate({
             inputRange: [0, 1],
             outputRange: [0.0001, 1],
+          }),
+        },
+      ],
+      borderRadius: 10
+    };
+
+    const progressStyleBycicle = {
+      transform: [
+        {
+          translateX: this.state.animationValue.interpolate({
+            inputRange: [0, 1],
+            outputRange: [innerWidth * -INDETERMINATE_WIDTH_FACTOR, innerWidth],
+          }),
+        },
+        {
+          translateX: this.state.progress.interpolate({
+            inputRange: [0, 1],
+            outputRange: [0, innerWidth - widthBycicle],
           }),
         },
       ],
@@ -171,7 +203,21 @@ export default class ProgressBar extends Component {
         onLayout={this.handleLayout}
         {...restProps}
       >
-        <Animated.View style={progressStyle} />
+        <View style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }}>
+          <View style = {{zIndex: 1000,}}>
+            <Animated.Image style={[{ marginBottom: 5, width: widthBycicle, height: heightBycicle }, progressStyleBycicle]} source={require("./images/bicycle-icon.png")} />
+          </View>
+          <View style={{ width: widthMedal, height: heightMedal}}>
+            <GoldMedal />
+          </View>
+        </View>
+        <View style={{backgroundColor: "rgba(32, 34, 44, 1)", borderRadius: 10}}>
+          <Animated.View style={[progressStyle]} />
+        </View>
         {children}
       </View>
     );
